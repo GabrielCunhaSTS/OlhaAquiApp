@@ -14,116 +14,39 @@ import CondominoPage from "../screens/condominio";
 import AddNew from "../screens/createnews";
 import AddEvent from "../screens/createevents";
 
+import HeaderLogo from "../components/header";
+
 const Stack = createStackNavigator();
 
-const HeaderLogo = () => (
-  <View style={styles.headerContainer}>
-    <Image 
-      source={require("../img/logo.png")} 
-      style={styles.logo}  
-    />
-  </View>
-);
+const routes = [
+  { name: "HomePage", component: HomePage },
+  { name: "CondominioPage", component: CondominioPage },
+  { name: "NewsPage", component: NewsPage },
+  { name: "JurisprudencePage", component: JurisprudencePage },
+  { name: "ContactPage", component: ContactPage },
+  { name: "EventsPage", component: EventsPage },
+  { name: "ChooseSide", component: ChooseSide },
+  { name: "CondominoPage", component: CondominoPage },
+  { name: "AddNew", component: AddNew },
+  { name: "AddEvent", component: AddEvent },
+];
 
 export default function Routes() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="HomePage">
-        <Stack.Screen 
-          name="HomePage" 
-          component={HomePage} 
-          options={{
-            headerTitle: () => <HeaderLogo />,
-            headerTitleAlign: "center",
-          }} 
-        />
-        <Stack.Screen 
-          name="CondominioPage" 
-          component={CondominioPage} 
-          options={{
-            headerTitle: () => <HeaderLogo />,
-            headerTitleAlign: "center",
-          }} 
-        />
-        <Stack.Screen 
-          name="NewsPage" 
-          component={NewsPage} 
-          options={{
-            headerTitle: () => <HeaderLogo />,
-            headerTitleAlign: "center",
-          }} 
-        />
-        <Stack.Screen 
-          name="JurisprudencePage" 
-          component={JurisprudencePage} 
-          options={{
-            headerTitle: () => <HeaderLogo />,
-            headerTitleAlign: "center",
-          }} 
-        />
-        <Stack.Screen 
-          name="ContactPage" 
-          component={ContactPage} 
-          options={{
-            headerTitle: () => <HeaderLogo />,
-            headerTitleAlign: "center",
-          }} 
-        />
-        <Stack.Screen 
-          name="EventsPage" 
-          component={EventsPage} 
-          options={{
-            headerTitle: () => <HeaderLogo />,
-            headerTitleAlign: "center",
-          }} 
-        />
-        <Stack.Screen 
-          name="ChooseSide" 
-          component={ChooseSide} 
-          options={{
-            headerTitle: () => <HeaderLogo />,
-            headerTitleAlign: "center",
-          }} 
-        />
-        <Stack.Screen 
-          name="CondominoPage" 
-          component={CondominoPage} 
-          options={{
-            headerTitle: () => <HeaderLogo />,
-            headerTitleAlign: "center",
-          }} 
-        />
-        <Stack.Screen 
-          name="AddNew" 
-          component={AddNew} 
-          options={{
-            headerTitle: () => <HeaderLogo />,
-            headerTitleAlign: "center",
-          }} 
-       
-          />
-          <Stack.Screen 
-            name="AddEvent" 
-            component={AddEvent} 
+        {routes.map(({ name, component }) => (
+          <Stack.Screen
+            key={name}
+            name={name}
+            component={component}
             options={{
               headerTitle: () => <HeaderLogo />,
               headerTitleAlign: "center",
-            }} 
+            }}
           />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  }
-  
-  const styles = StyleSheet.create({
-    headerContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    logo: {
-      width: 150,
-      height: 50,
-    },
-  });
-  
+        ))}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}

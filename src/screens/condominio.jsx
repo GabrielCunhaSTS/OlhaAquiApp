@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
-import { View, Text, Image, FlatList, ScrollView, StyleSheet, TouchableOpacity, Linking } from "react-native";
+import { ScrollView, StyleSheet, Text } from 'react-native';
+import SectorList from '../components/sectorList';
 
 const servicesBySector = {
   "Serralheria": [
@@ -38,143 +39,31 @@ const servicesBySector = {
 export default function CondominioPage() {
   const flatListRefs = useRef([]);
 
-  const scrollToStart = (index) => {
-    setTimeout(() => {
-      const ref = flatListRefs.current[index];
-      if (ref) {
-        ref.scrollToOffset({ animated: true, offset: 0 });
-      }
-    }, 5000);
-  };
-
-  const openWhatsApp = (phone) => {
+  const openWhatsApp = async (phone) => {
     const url = `https://wa.me/${phone}`;
-    Linking.openURL(url).catch(() => {
-      alert('Não foi possível abrir o WhatsApp.');
-    });
+    const supported = await Linking.canOpenURL(url);
+    if (supported) Linking.openURL(url);
+    else alert('WhatsApp não está disponível.');
   };
-
-  const renderService = ({ item }) => (
-    <View style={styles.card}>
-      <View style={styles.imagePlaceholder}>
-        <Image 
-          source={item.image} 
-          style={styles.image}
-        />
-      </View>
-      <Text style={styles.cardText}>{item.name}</Text>
-      <TouchableOpacity 
-        style={styles.contactInfo}
-        onPress={() => openWhatsApp(item.phone)}
-      >
-        <Image
-          source={require('../img/whatsapp.png')}
-          style={[styles.icon, { width: 20, height: 20 }]}
-        /> 
-        <Text style={styles.phoneText}>Entrar em contato</Text>
-      </TouchableOpacity>
-    </View>
-  );
-
-  const renderSector = (sector, services, index) => (
-    <View key={sector} style={styles.sectorContainer}>
-      <Text style={styles.sectorTitle}>{sector}</Text>
-      <FlatList
-        ref={(ref) => flatListRefs.current[index] = ref}
-        data={services}
-        renderItem={renderService}
-        keyExtractor={(item) => item.id}
-        horizontal
-        contentContainerStyle={styles.grid}
-        showsHorizontalScrollIndicator={true}
-        onEndReached={() => scrollToStart(index)}
-        onEndReachedThreshold={0.1}
-      />
-      <View style={styles.separator} />
-    </View>
-  );
 
   return (
-    <ScrollView 
-      style={styles.container} 
-      contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
-    >
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Anúncios</Text>
       <Text style={styles.subtitle}>Os melhores anúncios em um só lugar</Text>
-      {Object.entries(servicesBySector).map(([sector, services], index) =>
-        renderSector(sector, services, index)
-      )}
+      {Object.entries(servicesBySector).map(([sector, services], index) => (
+        <SectorList
+          key={sector}
+          sector={sector}
+          services={services}
+          onContact={openWhatsApp}
+        />
+      ))}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    backgroundColor: "#F7F7F7",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 10,
-    color: "#333",
-  },
-  subtitle: {
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 20,
-    color: "#555",
-  },
-  sectorContainer: {
-    marginBottom: 20,
-  },
-  sectorTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 10,
-    color: "#333",
-    paddingLeft: 8,
-  },
-  grid: {
-    flexDirection: "row",
-  },
-  card: {
-    width: 160,
-    marginRight: 12,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    padding: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  image: {
-    width: "100%",
-    height: 100,
-    borderRadius: 8,
-    marginBottom: 8,
-    backgroundColor: "#E0E0E0",
-  },
-  cardText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 5,
-    color: "#333",
-  },
-  contactInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 5,
-  },
-  phoneText: {
-    fontSize: 14,
-    textAlign: "center",
-    color: "#555",
-    marginLeft: 5,
-  },
+  container: { padding: 16, backgroundColor: "#F7F7F7" },
+  title: { fontSize: 24, fontWeight: "bold", textAlign: "center", marginBottom: 10 },
+  subtitle: { fontSize: 16, textAlign: "center", marginBottom: 20 },
 });
